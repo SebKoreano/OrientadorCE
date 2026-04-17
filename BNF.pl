@@ -4,6 +4,15 @@
    - identifica sintagmas nominales y verbales
    - infiere intencion afirmativa o negativa
    - genera una reformulacion canonica en espanol
+   
+   El sistema recibe tres cosas principales:
+   - Una pregunta desde BD.pl (line 5).
+   - La respuesta libre del usuario, leída en Logic.pl (line 22) con read_line_to_string.
+   - El tema actual de la pregunta, que se le pasa al parser como contexto. Eso sirve para entender respuestas donde el usuario no repite el tema completo.
+   
+   Si logra analizar la frase, genera dos salidas en Logic.pl (line 30):
+   - Arbol: representa la estructura sintáctica de la oración.
+   - Semantica: representa el significado útil para el sistema experto.
    ========================= */
 
 
