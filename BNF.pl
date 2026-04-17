@@ -13,6 +13,8 @@
    Si logra analizar la frase, genera dos salidas en Logic.pl (line 30):
    - Arbol: representa la estructura sintáctica de la oración.
    - Semantica: representa el significado útil para el sistema experto.
+   semantica(TemaPregunta, Intencion, referente(ReferenteDetectado), canonica(TextoCanonico))
+   Ejemplo: semantica(tecnologia, positiva, referente(tecnologia), canonica('me gusta la tecnologia'))
    ========================= */
 
 
