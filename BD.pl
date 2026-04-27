@@ -21,6 +21,8 @@ pregunta(experiencias, "Te gusta crear experiencias memorables para otras person
 pregunta(historia, "Te interesa la historia y el pasado de las civilizaciones?").
 pregunta(animales, "Te interesan los animales y los seres vivos?").
 pregunta(ventas, "Te interesa vender, convencer o negociar con otras personas?").
+pregunta(biologiaTema, "Te interesa la biologia, los seres vivos y los ecosistemas?").
+pregunta(matematicas, "Te gustan las matematicas y el razonamiento numerico?").
 
 pregunta(logica, "Se te facilita razonar de forma logica y ordenada?").
 pregunta(problemas, "Disfrutas resolver problemas complejos?").
@@ -37,7 +39,7 @@ pregunta(recursos, "Sabes administrar recursos y aprovechar lo que tienes?").
 pregunta(aislamiento, "Trabajas bien incluso cuando estas solo o aislado?").
 pregunta(presion, "Rindes bien cuando trabajas bajo presion?").
 pregunta(paciencia, "Tienes paciencia para procesos largos o detallados?").
-pregunta(ciencia, "Te sientes comodo con el metodo cientifico y la investigacion?").
+pregunta(metodo_cientifico, "Te sientes comodo con el metodo cientifico y la investigacion?").
 pregunta(rechazo, "Toleras bien el rechazo o la critica en situaciones de trabajo?").
 
 pregunta(ambiguedad, "Te incomoda no tener claridad o instrucciones precisas?").
@@ -89,10 +91,10 @@ afinidad(justicia, derecho).
 
 afinidad(diseno, arquitectura).
 afinidad(estetica, arquitectura).
-adfinidad(tecnologia, arquitectura).
+afinidad(tecnologia, arquitectura).
 
 afinidad(agroecosistemas, agricola).
-afinidad(biologia, agricola).
+afinidad(biologiaTema, agricola).
 afinidad(campo, agricola).
 
 afinidad(estrellas, astronauta).
@@ -108,7 +110,7 @@ afinidad(justicia, arquelogia).
 afinidad(campo, arquelogia).
 
 afinidad(animales, biologia).
-afinidad(biologia, biologia).
+afinidad(biologiaTema, biologia).
 afinidad(campo, biologia).
 
 afinidad(ventas, agenteVentas).
@@ -122,6 +124,7 @@ afinidad(personas, agenteVentas).
 fortaleza(logica, ingenieriaCE).
 fortaleza(problemas, ingenieriaCE).
 fortaleza(analisis, ingenieriaCE).
+fortaleza(matematicas, ingenieriaCE).
 
 fortaleza(resiliencia, medicina).
 fortaleza(disciplina, medicina).
@@ -154,9 +157,10 @@ fortaleza(planificacion, arquelogia).
 fortaleza(ciencia, biologia).
 fortaleza(disciplina, biologia).
 fortaleza(analisis, biologia).
+fortaleza(biologiaTema, biologia).
 
 fortaleza(rechazo, agenteVentas).
-fortaleza(persuasión, agenteVentas).
+fortaleza(persuasion, agenteVentas).
 fortaleza(creatividad, agenteVentas).
 
 

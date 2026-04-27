@@ -101,11 +101,15 @@ intensificador_opcional(sin_intensificador) --> [].
    Complementos
    ========================= */
 
-complemento_opcional(_Tema, complemento(Objeto), Referente, Texto) -->
+complemento_opcional(_Tema, complemento(Prep, Objeto), Referente, Texto) -->
+    preposicion_tema_opcional(Prep),
     objeto(Objeto, Referente, Texto).
 complemento_opcional(Tema, complemento_implicito(tema(Tema)), Tema, Texto) -->
     [],
     { tema_por_defecto(Tema, Texto) }.
+
+preposicion_tema_opcional(preposicion(por)) --> [por].
+preposicion_tema_opcional(sin_preposicion) --> [].
 
 objeto(sn_objeto(Det, Nombre), Referente, Texto) -->
     determinante_opcional(Det),
@@ -132,6 +136,28 @@ nombre_tema(nombre(Token), problemas, 'los problemas') -->
     [Token],
     { lex_nombre_tema(Token, problemas) }.
 
+nombre_tema(nombre_alias(Token), Referente, Texto) -->
+    [Token],
+    {
+        alias_tema(Token, Referente),
+        construir_texto_tema(Referente, Texto)
+    }.
+
+nombre_tema(nombre_alias_compuesto(Token1, Token2), Referente, Texto) -->
+    [Token1, Token2],
+    {
+        alias_tema([Token1, Token2], Referente),
+        construir_texto_tema(Referente, Texto)
+    }.
+
+nombre_tema(nombre(Token), Referente, Texto) -->
+    [Token],
+    {
+        tema_en_bd(Token),
+        Referente = Token,
+        construir_texto_tema(Token, Texto)
+    }.
+
 actividad(actividad(verbo_infinitivo(escuchar), Complemento), escuchar, Texto) -->
     [escuchar],
     complemento_escuchar_opcional(Complemento),
@@ -144,7 +170,15 @@ actividad(actividad(verbo_infinitivo(hablar), Complemento), hablar, Texto) -->
 
 actividad(actividad(verbo_infinitivo(resolver), nombre(problemas)), problemas, 'resolver problemas') -->
     [resolver],
+    determinante_opcional(_),
     [problemas].
+
+actividad(actividad(verbo_infinitivo(resolver), nombre(problemas), prep(de), grupo_personas), problemas, 'resolver problemas de personas') -->
+    [resolver],
+    determinante_opcional(_),
+    [problemas],
+    [de],
+    sintagma_personas_extendido.
 
 actividad(actividad(verbo_infinitivo(ayudar), Prep, SN), personas, 'ayudar a las personas') -->
     [ayudar],
@@ -177,14 +211,50 @@ nombre_personas(nombre(Token)) -->
     [Token],
     { lex_nombre_personas(Token) }.
 
+sintagma_personas_extendido -->
+    sintagma_personas(_).
+sintagma_personas_extendido -->
+    determinante_opcional(_),
+    [demas],
+    [personas].
+sintagma_personas_extendido -->
+    determinante_opcional(_),
+    [otras],
+    [personas].
+
 
 /* =========================
    Locuciones elipticas
    ========================= */
 
-locucion_respuesta(locucion_negativa(no_mucho), negativa) --> [no, mucho].
-locucion_respuesta(locucion_negativa(para_nada), negativa) --> [para, nada].
-locucion_respuesta(locucion_positiva(me_encanta), positiva) --> [me, encanta].
+/* Locuciones elipticas validas: requieren al menos dos tokens
+   o ser una expresion compuesta. El sistema rechaza "si" y "no"
+   solos para obligar al usuario a expresarse en lenguaje natural. */
+locucion_respuesta(locucion_negativa(no_mucho), negativa)            --> [no, mucho].
+locucion_respuesta(locucion_negativa(para_nada), negativa)           --> [para, nada].
+locucion_respuesta(locucion_negativa(claro_que_no), negativa)        --> [claro, que, no].
+locucion_respuesta(locucion_negativa(de_ninguna_manera), negativa)   --> [de, ninguna, manera].
+locucion_respuesta(locucion_negativa(por_supuesto_que_no), negativa) --> [por, supuesto, que, no].
+locucion_respuesta(locucion_negativa(poco), negativa)            --> [poco].
+locucion_respuesta(locucion_negativa(no_lo_hago), negativa)     --> [no, lo, hago].
+locucion_respuesta(locucion_negativa(no_me_interesa), negativa) --> [no, me, interesa].
+locucion_respuesta(locucion_negativa(no_me_gusta), negativa)   --> [no, me, gusta].
+locucion_respuesta(locucion_negativa(no_lo_soy), negativa) --> [no, lo, soy].
+
+
+locucion_respuesta(locucion_positiva(me_encanta), positiva)          --> [me, encanta].
+locucion_respuesta(locucion_positiva(claro_que_si), positiva)        --> [claro, que, si].
+locucion_respuesta(locucion_positiva(por_supuesto), positiva)        --> [por, supuesto].
+locucion_respuesta(locucion_positiva(desde_luego), positiva)         --> [desde, luego].
+locucion_respuesta(locucion_positiva(por_supuesto_que_si), positiva) --> [por, supuesto, que, si].
+locucion_respuesta(locucion_positiva(mucho), positiva)          --> [mucho].
+locucion_respuesta(locucion_positiva(si_lo_hago), positiva)     --> [si, lo, hago].
+locucion_respuesta(locucion_positiva(me_interesa), positiva) --> [me, interesa].
+locucion_respuesta(locucion_positiva(me_gusta), positiva)   --> [me, gusta].
+locucion_respuesta(locucion_positiva(lo_soy), positiva) --> [lo, soy].
+
+
+
 
 
 /* =========================
@@ -210,6 +280,32 @@ tema_por_defecto(matematicas, 'las matematicas').
 tema_por_defecto(personas, 'las personas').
 tema_por_defecto(problemas, 'resolver problemas').
 tema_por_defecto(comunicacion, 'comunicarse').
+tema_por_defecto(poco, 'un poco').
+tema_por_defecto(Tema, Texto) :-
+    Tema \= poco,
+    construir_texto_tema(Tema, Texto).
+
+tema_en_bd(Tema) :-
+    pregunta(Tema, _).
+
+alias_tema(produccion, agroecosistemas).
+alias_tema([entorno, natural], agroecosistemas).
+alias_tema(computador, computadores).
+alias_tema(computadora, computadores).
+alias_tema(computadoras, computadores).
+alias_tema(investigacion, metodo_cientifico).
+alias_tema(cientifico, metodo_cientifico).
+alias_tema([un, poco], poco).
+alias_tema(poco, poco).
+alias_tema(biologia, biologiaTema).
+alias_tema(biologicas, biologiaTema).
+alias_tema(matematicas, matematicas).
+alias_tema(numeros, matematicas).
+alias_tema(calculo, matematicas).
+
+construir_texto_tema(Tema, Texto) :-
+    pregunta(Tema, Pregunta),
+    atomic_list_concat(['el area consultada (', Pregunta, ')'], Texto).
 
 construir_texto_actividad(escuchar, sin_complemento, 'escuchar').
 construir_texto_actividad(escuchar, complemento_prep(_, _), 'escuchar a las personas').
@@ -231,12 +327,17 @@ lex_verbo_gusto(encanta, positiva).
 lex_verbo_gusto(encantan, positiva).
 lex_verbo_gusto(interesa, positiva).
 lex_verbo_gusto(interesan, positiva).
+lex_verbo_gusto(intereso, positiva).
 lex_verbo_gusto(atrae, positiva).
 lex_verbo_gusto(atraen, positiva).
 lex_verbo_gusto(disgusta, negativa).
 lex_verbo_gusto(disgustan, negativa).
 lex_verbo_gusto(desagrada, negativa).
 lex_verbo_gusto(desagradan, negativa).
+lex_verbo_gusto(agrada, positiva).
+lex_verbo_gusto(agradada, positiva).
+lex_verbo_gusto(importa, positiva).
+lex_verbo_gusto(importan, positiva).
 
 lex_verbo_preferencia(prefiero, positiva).
 lex_verbo_preferencia(disfruto, positiva).
@@ -251,6 +352,9 @@ lex_intensificador(mucho).
 lex_intensificador(bastante).
 lex_intensificador(realmente).
 lex_intensificador(mas).
+lex_intensificador(poco).
+lex_intensificador(un).
+lex_intensificador(muy).
 
 lex_determinante(la).
 lex_determinante(el).
